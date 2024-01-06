@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, validator
-from typing import List, Optional
+from typing import List, Optional, Union
 from datetime import datetime
 
 class AudioTags(BaseModel):
@@ -81,14 +81,14 @@ class OMDBVideoInfo(BaseModel):
     Year: Optional[int] = Field(default=None)
     Released: Optional[str] = Field(default=None)
     Runtime: Optional[str] = Field(default=None)
-    Genre: Optional[str] = Field(default=None)
+    Genre: Union[list, str, None] = Field(default=None, union_mode="left_to_right")
     Director: Optional[str] = Field(default=None)
-    Writer: Optional[str] = Field(default=None)
-    Actors: Optional[str] = Field(default=None)
+    Writer: Union[list, str, None] = Field(default=None, union_mode="left_to_right")
+    Actors: Union[list, str, None] = Field(default=None, union_mode="left_to_right")
     Plot: Optional[str] = Field(default=None)
     Poster: Optional[str] = Field(default=None)
-    Metascore: Optional[str] = Field(default=None)
-    imdbRating: Optional[str] = Field(default=None)
+    Metascore: Optional[int] = Field(default=None)
+    imdbRating: Optional[float] = Field(default=None)
     imdbID: Optional[str] = Field(default=None)
 
 
@@ -116,14 +116,14 @@ class OMDBVideoInfo(BaseModel):
             return datetime.strptime(value, '%d %b %Y').strftime('%Y-%m-%d')
         return None
 
-    @validator("Metascore")
-    def format_metascore(cls, value):
-        if value:
-            return int(value)
-        return None
+    # @validator("Metascore")
+    # def format_metascore(cls, value):
+    #     if value:
+    #         return int(value)
+    #     return None
 
-    @validator("imdbRating")
-    def format_imdb_rating(cls, value):
-        if value:
-            return float(value)
-        return None
+    # @validator("imdbRating")
+    # def format_imdb_rating(cls, value):
+    #     if value:
+    #         return float(value)
+    #     return None
