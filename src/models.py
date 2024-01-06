@@ -1,9 +1,10 @@
 from pydantic import BaseModel, Field, validator
 from typing import List, Optional
+from datetime import datetime
 
 class AudioTags(BaseModel):
-    language: str
-    title: str
+    language: Optional[str] = Field(default=None)
+    title: Optional[str] = Field(default=None)
 
 class GeneralVideoDataTags(BaseModel):
     title: str
@@ -74,3 +75,55 @@ class VideoData(BaseModel):
     audio_streams: List[AudioStream] = Field(default=None)
     subtitle_streams: List[SubtitleStream] = Field(default=None)
     general_video_info: GeneralVideoData
+
+class OMDBVideoInfo(BaseModel):
+    Title: str
+    Year: Optional[int] = Field(default=None)
+    Released: Optional[str] = Field(default=None)
+    Runtime: Optional[str] = Field(default=None)
+    Genre: Optional[str] = Field(default=None)
+    Director: Optional[str] = Field(default=None)
+    Writer: Optional[str] = Field(default=None)
+    Actors: Optional[str] = Field(default=None)
+    Plot: Optional[str] = Field(default=None)
+    Poster: Optional[str] = Field(default=None)
+    Metascore: Optional[str] = Field(default=None)
+    imdbRating: Optional[str] = Field(default=None)
+    imdbID: Optional[str] = Field(default=None)
+
+
+    @validator("Actors")
+    def split_actors(cls, value):
+        if value:
+            return [x.strip() for x in value.split(',')]
+        return None
+
+    @validator("Writer")
+    def split_writer(cls, value):
+        if value:
+            return [x.strip() for x in value.split(',')]
+        return None
+    
+    @validator("Genre")
+    def split_genre(cls, value):
+        if value:
+            return [x.strip() for x in value.split(',')]
+        return None
+    
+    @validator("Released")
+    def format_released(cls, value):
+        if value:
+            return datetime.strptime(value, '%d %b %Y').strftime('%Y-%m-%d')
+        return None
+
+    @validator("Metascore")
+    def format_metascore(cls, value):
+        if value:
+            return int(value)
+        return None
+
+    @validator("imdbRating")
+    def format_imdb_rating(cls, value):
+        if value:
+            return float(value)
+        return None
