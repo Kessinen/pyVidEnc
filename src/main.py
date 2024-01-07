@@ -14,7 +14,6 @@ def parse_args():
     parser.add_argument("-i","--imdb_id", type=str, default=None, required=False)
     parser.add_argument("-y","--year", type=int, default=None, required=False)
 
-
     parsed_args = parser.parse_args()
     if not parsed_args.input_file.exists():
         raise FileNotFoundError(parsed_args.input_file)
@@ -46,12 +45,18 @@ IMDB: https://www.imdb.com/title/{movie_info.imdbID}""")
     return confirm.lower() != "n"
     
 def main():
+
+    #Parse command line arguments
     args = parse_args()
+
+    # Get video data and save it to a pydantic model
     video_data: VideoData = get_video_data(args.input_file)
 
+    # Get movie info from OMDB and save it to a pydantic model
     video_info_fields = {k:v for k,v in {"title":args.title, "imdb_id":args.imdb_id, "year":args.year}.items() if v}
     movie_info = fetch_movie_info(**video_info_fields)
 
+    # Set the output filename based on the info we have. Also get the poster and save the movies OMDB info to a json file.
     if movie_info and confirm_video_info(movie_info):
         output_filename_stem = output_filename_format(movie_info)
         Path(f"{output_filename_stem}.json").write_text(movie_info.model_dump_json())
