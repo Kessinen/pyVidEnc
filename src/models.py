@@ -55,7 +55,8 @@ class VideoStream(BaseModel):
     
     @property
     def MPixels(self):
-        return self.width * self.height
+        return round(self.resolution[0] * self.resolution[1] / 1000000, 2)
+        
 
 class AudioStream(BaseModel):
     index: int
