@@ -51,7 +51,7 @@ class VideoStream(BaseModel):
     @property
     def fps(self):
         uncalculated_fps = self.r_frame_rate.split("/")
-        return int(uncalculated_fps[0]) / int(uncalculated_fps[1])
+        return round(int(uncalculated_fps[0]) / int(uncalculated_fps[1]), 2)
     
     @property
     def MPixels(self):
