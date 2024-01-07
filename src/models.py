@@ -18,11 +18,11 @@ class VideoStream(BaseModel):
     width: int
     height: int
     r_frame_rate: str
-    sample_aspect_ratio: str
-    display_aspect_ratio: str
+    sample_aspect_ratio: Optional[str] = Field(default=None)
+    display_aspect_ratio: Optional[str] = Field(default=None)
     pix_fmt: str
     disposition: dict
-    tags: dict
+    tags: Optional[dict] = Field(default=dict)
 
     # TODO: SAR and DAR converters may not be the best way to do this. Thus, they are commented out. Review needed.
     # @validator("sample_aspect_ratio")
@@ -67,7 +67,7 @@ class AudioStream(BaseModel):
     channels: int
     channel_layout: str
     disposition: dict
-    tags: AudioTags
+    tags: Optional[AudioTags] = Field(default=AudioTags())
 
     @validator("disposition")
     def validate_disposition(cls, value):
@@ -78,7 +78,7 @@ class SubtitleStream(BaseModel):
     index: int
     codec_name: str
     codec_long_name: str
-    tags: dict
+    tags: Optional[dict] = Field(default=dict)
 
 class GeneralVideoData(BaseModel):
     filename: str
