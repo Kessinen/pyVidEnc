@@ -6,6 +6,15 @@ from models import OMDBVideoInfo
 
 base_url = "http://www.omdbapi.com"
 
+def confirm_video_info(movie_info: OMDBVideoInfo):
+    print(f"""Found the following video info from OMDB:
+
+Title: {movie_info.Title}
+Year: {movie_info.Year}
+IMDB: https://www.imdb.com/title/{movie_info.imdbID}""")
+    confirm = input("Is this correct? (Y/n) ")
+    return confirm.lower() != "n"
+
 def fetch_movie_info(title: str = None, imdb_id: str = None, year: int = None) -> OMDBVideoInfo:
     if OMDB_API_KEY == None:
         print("Error: OMDB_API_KEY is not set")
@@ -33,4 +42,7 @@ def fetch_movie_info(title: str = None, imdb_id: str = None, year: int = None) -
         return None
     # Convert N/A to None
     json_data = {k:None if x == "N/A" else x for k,x in json_data.items()}
+    video_info = OMDBVideoInfo(**json_data)
+    if not confirm_video_info(video_info):
+        return None
     return OMDBVideoInfo(**json_data)

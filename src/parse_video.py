@@ -1,6 +1,7 @@
 from subprocess import run
 from rich import print
 from typing import Union, List
+from pathlib import Path
 import json
 
 from models import VideoStream, AudioStream, SubtitleStream, GeneralVideoData, VideoData
@@ -55,7 +56,7 @@ def get_general_video_info(video_path) -> dict:
     return GeneralVideoData(**json_data["format"])
 
 
-def get_video_data(video_path) -> dict:
+def get_video_data(video_path: Path) -> VideoData:
     data = {
         "video_streams": get_video_streams(video_path),
         "audio_streams": get_audio_streams(video_path),

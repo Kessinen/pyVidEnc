@@ -7,14 +7,17 @@ class AudioTags(BaseModel):
     title: Optional[str] = Field(default=None)
 
 class GeneralVideoDataTags(BaseModel):
-    title: str
-    IMDB_ID: str
-    DATE_RELEASED: str
+    title: Optional[str] = Field(default=None)
+    IMDB_ID: Optional[str] = Field(default=None)
+    DATE_RELEASED: Optional[str] = Field(default=None)
 
 class VideoStream(BaseModel):
     index: int
     codec_name: str
     codec_long_name: str
+    width: int
+    height: int
+    r_frame_rate: str
     sample_aspect_ratio: str
     display_aspect_ratio: str
     pix_fmt: str
@@ -68,7 +71,7 @@ class GeneralVideoData(BaseModel):
     format_name: str
     format_long_name: str
     duration: float
-    tags: GeneralVideoDataTags
+    tags: Optional[GeneralVideoDataTags] = Field(default=None)
 
 class VideoData(BaseModel):
     video_streams: List[VideoStream]

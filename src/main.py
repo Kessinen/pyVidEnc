@@ -6,6 +6,7 @@ from rich import print
 from parse_video import get_video_data
 from movie_info import fetch_movie_info
 from models import VideoData, OMDBVideoInfo
+from ffmpeg import ffmpegEncodeCMD
 
 def parse_args():
     parser = ArgumentParser()
@@ -13,6 +14,8 @@ def parse_args():
     parser.add_argument("-t","--title", type=str, default=None, required=False)
     parser.add_argument("-i","--imdb_id", type=str, default=None, required=False)
     parser.add_argument("-y","--year", type=int, default=None, required=False)
+    parser.add_argument("-p","--poster", action="store_true", default=False, required=False, help="Download the movie poster")
+    parser.add_argument("-j","--json", action="store_true", default=False, required=False, help="Write the movie info to a json file")
 
     parsed_args = parser.parse_args()
     if not parsed_args.input_file.exists():
@@ -34,32 +37,34 @@ def output_filename_format(movie_info: OMDBVideoInfo):
     year = movie_info.Year
     filename = [title, year, imdb_id]
     return ".".join([str(x) for x in filename if x])
-
-def confirm_video_info(movie_info: OMDBVideoInfo):
-    print(f"""Found the following video info from OMDB:
-
-Title: {movie_info.Title}
-Year: {movie_info.Year}
-IMDB: https://www.imdb.com/title/{movie_info.imdbID}""")
-    confirm = input("Is this correct? (Y/n) ")
-    return confirm.lower() != "n"
     
 def main():
 
     #Parse command line arguments
+    print("Parsing command line arguments...")
     args = parse_args()
 
     # Get video data and save it to a pydantic model
+    print("Getting video data...")
     video_data: VideoData = get_video_data(args.input_file)
 
     # Get movie info from OMDB and save it to a pydantic model
-    video_info_fields = {k:v for k,v in {"title":args.title, "imdb_id":args.imdb_id, "year":args.year}.items() if v}
-    movie_info = fetch_movie_info(**video_info_fields)
+    print("Fetching movie info...")
+    movie_info = fetch_movie_info(title=args.title, imdb_id=args.imdb_id, year=args.year)
+
+    # Encode the video
+    print(f"Encoding {args.input_file}")
+    jee = ffmpegEncodeCMD(video_file=video_data, metadata=movie_info)
+    jee.encode()
+
 
     # Set the output filename based on the info we have. Also get the poster and save the movies OMDB info to a json file.
-    if movie_info and confirm_video_info(movie_info):
+    print("Setting the output filename...")
+    if movie_info:
         output_filename_stem = output_filename_format(movie_info)
+    if args.json:
         Path(f"{output_filename_stem}.json").write_text(movie_info.model_dump_json())
+    if args.poster:
         fetch_poster(args.input_file, movie_info.Poster, output_filename_stem)
 
 if __name__ == "__main__":
