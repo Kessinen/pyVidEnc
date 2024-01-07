@@ -44,6 +44,19 @@ class VideoStream(BaseModel):
         return_value = {k: v for k, v in value.items() if v == 1}
         return return_value
 
+    @property
+    def resolution(self):
+        return (self.width, self.height)
+
+    @property
+    def fps(self):
+        uncalculated_fps = self.r_frame_rate.split("/")
+        return int(uncalculated_fps[0]) / int(uncalculated_fps[1])
+    
+    @property
+    def MPixels(self):
+        return self.width * self.height
+
 class AudioStream(BaseModel):
     index: int
     codec_name: str
