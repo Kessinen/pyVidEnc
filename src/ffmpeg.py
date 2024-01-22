@@ -14,7 +14,7 @@ class ffmpegEncodeCMD(BaseModel):
     def set_output_filename(self, suffix: str = ".mkv") -> Path:
         output_filename = "output.mkv"
         if self.metadata:
-            output_filename = f"{self.metadata.Title}.{self.metadata.Year}{suffix}".title().replace(" ", "")
+            output_filename = f"{self.metadata.Title}.{self.metadata.Year}".title().replace(" ", "") + suffix
         return output_filename
 
     def set_video_render_settings(self) -> List[str]:
@@ -60,13 +60,15 @@ class ffmpegEncodeCMD(BaseModel):
             return_value += ["-metadata", f"imdb_id='{self.metadata.imdbID}'"]
         return return_value
 
-    def encode(self):
-        base_cmd = ["ffmpeg", "-v", "error", "-i", self.video_file.general_video_info.filename, "-map", "0", "-map_metadata", "-1", "-map_chapters", "-1", "-pix_fmt", "yuv420p10le"]
+    def encode(self) -> str:
+        base_cmd = ["ffmpeg", "-v", "error", "-i", f"'{self.video_file.general_video_info.filename}'", "-map", "0", "-map_metadata", "-1", "-pix_fmt", "yuv420p10le"]
         output_filename = [f"'{self.set_output_filename()}'"]
         video_render_settings = self.set_video_render_settings()
         audio_render_settings = self.set_audio_render_settings()
         subtitle_render_settings = self.set_subtitle_render_settings()
         cmd = base_cmd + video_render_settings + audio_render_settings + subtitle_render_settings + self.set_metadata_render_settings() + output_filename
-        print("Command to run:", " ".join(cmd))
+        print("Command to run:\n", " ".join(cmd).strip())
+        return " ".join(cmd).strip()
+        
 
     

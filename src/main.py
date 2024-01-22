@@ -38,6 +38,14 @@ def output_filename_format(movie_info: OMDBVideoInfo):
     filename = [title, year, imdb_id]
     return ".".join([str(x) for x in filename if x])
     
+def writeShellScript(filename: Path, cmd: str):
+    if filename.exists():
+        print(f"{filename} already exists. Skipping shell script generation.")
+    with open (filename, "w") as f:
+        f.write(cmd)
+    print(f"Writing shell script to {filename}")
+    pass
+
 def main():
 
     #Parse command line arguments
@@ -55,7 +63,8 @@ def main():
     # Encode the video
     print(f"Encoding {args.input_file}")
     jee = ffmpegEncodeCMD(video_file=video_data, metadata=movie_info)
-    jee.encode()
+    cmd = jee.encode()
+    writeShellScript(args.input_file.parent / "encode.sh", cmd=cmd)
 
 
     # Set the output filename based on the info we have. Also get the poster and save the movies OMDB info to a json file.
