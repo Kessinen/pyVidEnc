@@ -1,1 +1,17 @@
 OMDB_API_KEY = None
+
+render_settings = {
+    "video": {
+        "-c:v": "libsvtav1",
+        "-crf": 30,
+        "-preset": 6,
+        "-svtav1params": {
+            "tune": 0,
+            "enable-overlay": 1,
+            "film-grain": 30
+        },
+        "-g": 240
+    }
+}
+
+valid_video_extensions = [".mkv", ".mp4", ".webm", ".avi"]
