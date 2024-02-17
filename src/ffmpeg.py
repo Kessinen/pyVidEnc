@@ -13,8 +13,13 @@ class ffmpegEncodeCMD(BaseModel):
 
     def set_output_filename(self, suffix: str = ".mkv") -> Path:
         output_filename = "output.mkv"
-        if self.metadata:
-            output_filename = f"{self.metadata.Title}.{self.metadata.Year}".title().replace(" ", "") + suffix
+        if not self.metadata:
+            return output_filename
+        
+        invalid_chars = ["\\", "/", ":", "*", "?", "\"", "<", ">", "|", " "]
+        output_filename = f"{self.metadata.Title}.{self.metadata.Year}".title() + suffix
+        for char in invalid_chars:
+            output_filename = output_filename.replace(char, "_").replace("__", "_")
         return output_filename
 
     def set_video_render_settings(self) -> List[str]:
