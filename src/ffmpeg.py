@@ -60,7 +60,7 @@ class ffmpegEncodeCMD(BaseModel):
             date_released = f"{self.metadata.Year}"
         if self.metadata.Released:
             date_released = self.metadata.Released
-        return_value += ["-metadata", f"date_released='{date_released}'"]
+            return_value += ["-metadata", f"date_released='{date_released}'"]
         if self.metadata.imdbID:
             return_value += ["-metadata", f"imdb_id='{self.metadata.imdbID}'"]
         return return_value

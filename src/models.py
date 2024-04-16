@@ -10,6 +10,7 @@ class GeneralVideoDataTags(BaseModel):
     title: Optional[str] = Field(default=None)
     IMDB_ID: Optional[str] = Field(default=None)
     DATE_RELEASED: Optional[str] = Field(default=None)
+    ORIGINAL_MEDIA_TYPE: Optional[str] = Field(default=None)
 
 class VideoStream(BaseModel):
     index: int
@@ -94,7 +95,7 @@ class VideoData(BaseModel):
     general_video_info: GeneralVideoData
 
 class OMDBVideoInfo(BaseModel):
-    Title: str
+    Title: str = Field(default="Untitled")
     Year: Optional[int] = Field(default=None)
     Released: Optional[str] = Field(default=None)
     Runtime: Optional[str] = Field(default=None)
@@ -132,15 +133,3 @@ class OMDBVideoInfo(BaseModel):
         if value:
             return datetime.strptime(value, '%d %b %Y').strftime('%Y-%m-%d')
         return None
-
-    # @validator("Metascore")
-    # def format_metascore(cls, value):
-    #     if value:
-    #         return int(value)
-    #     return None
-
-    # @validator("imdbRating")
-    # def format_imdb_rating(cls, value):
-    #     if value:
-    #         return float(value)
-    #     return None
