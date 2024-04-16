@@ -59,7 +59,6 @@ def main():
     # Get movie info from OMDB and save it to a pydantic model
     print("Fetching movie info...")
     movie_info = fetch_movie_info(title=args.title, imdb_id=args.imdb_id, year=args.year)
-    print(movie_info)
 
     # Encode the video
     print(f"Encoding {args.input_file}")

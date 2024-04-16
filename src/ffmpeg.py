@@ -25,7 +25,21 @@ class ffmpegEncodeCMD(BaseModel):
     def set_video_render_settings(self) -> List[str]:
         # Get current fps
         fps = int(self.video_file.video_streams[0].r_frame_rate.split("/")[0])
-        render_settings = ["-c:v", "libsvtav1", "-crf", "35", "-preset", "6", "-svtav1-params", "tune=0,enable-overlay=1,film-grain=30", "-g", str(fps*10)]
+        #TODO: Implement profiles
+        render_profiles: dict = {
+            "DVD": {
+                "preset": 6,
+                "crf": 35,
+                "film-grain": 30
+            },
+            "Bluray": {
+                "preset": 6,
+                "crf": 28,
+                "film-grain": 20
+            }
+        }
+        selected_profile = "DVD"
+        render_settings = ["-c:v", "libsvtav1", "-crf", f"{render_profiles[selected_profile]['crf']}", "-preset", f"{render_profiles[selected_profile]['preset']}", "-svtav1-params", f"tune=0:enable-overlay=1:film-grain={render_profiles[selected_profile]['film-grain']}", "-g", str(fps*10)]
         if self.video_file.video_streams[0].sample_aspect_ratio != "1:1":
             correctDar = (self.video_file.video_streams[0].display_aspect_ratio.split(":"))
             new_resolution = (int(self.video_file.video_streams[0].height / int(correctDar[1]) * int(correctDar[0])), self.video_file.video_streams[0].height)
