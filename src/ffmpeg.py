@@ -71,7 +71,8 @@ class ffmpegEncodeCMD(BaseModel):
         video_render_settings = self.set_video_render_settings()
         audio_render_settings = self.set_audio_render_settings()
         subtitle_render_settings = self.set_subtitle_render_settings()
-        cmd = base_cmd + video_render_settings + audio_render_settings + subtitle_render_settings + self.set_metadata_render_settings() + output_filename
+        original_media_type = ["-metadata", f"original_media_type='None'"]
+        cmd = base_cmd + video_render_settings + audio_render_settings + subtitle_render_settings + self.set_metadata_render_settings() + original_media_type + output_filename
         print("Command to run:\n", " ".join(cmd).strip())
         return " ".join(cmd).strip()
         
